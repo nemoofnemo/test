@@ -144,10 +144,13 @@ public:
 	}
 };
 
+
 int main(void) {
 	/*int arr[] = {4,11,16,20,40,15,13,2,3,1,8,4,13};
 	show(arr, 13);
 	func1(arr);*/
 	
+	
+
 	return 0;
 }
