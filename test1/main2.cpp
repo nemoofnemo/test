@@ -67,30 +67,87 @@ void m_sort(int *arr, int begin, int end) {
 	int i = begin;
 	int d = end;
 	while (i < d) {
-		while ( i < d && arr[i] < cmp) {
-			++i;
-		}
-		while ( i < d && arr[d] >= cmp) {
+		while (i < d && arr[d] > cmp) {
 			--d;
 		}
-
 		if (i < d) {
-			int temp = arr[i];
 			arr[i] = arr[d];
-			arr[d] = temp;
+			i++;
+		}
+		while (i < d && arr[i] <= cmp){
+			++i;
+		}
+		if (i < d) {
+			arr[d] = arr[i];
+			d--;
 		}
 	}
-
-	m_sort(arr, begin, i);
+	arr[i] = cmp;
+	m_sort(arr, begin, i - 1);
 	m_sort(arr, i + 1 , end);
 
 	return;
 }
 
+void func1(int arr[3]) {
+	cout << arr[4] << endl;
+}
+
+class A {
+public:
+	A() {
+		cout << "AC" << endl;
+	}
+	virtual ~A() {
+		cout << "AD" << endl;
+	}
+};
+
+class B {
+public:
+	B() {
+		cout << "BC" << endl;
+	}
+	virtual ~B() {
+		cout << "BD" << endl;
+	}
+};
+
+class C : public A, virtual public B {
+public:
+	C() {
+		cout << "CC" << endl;
+	}
+	virtual ~C() {
+		cout << "CD" << endl;
+	}
+};
+
+class Empty {
+
+};
+
+class A1 {
+public:
+	virtual void func(int a) {
+		cout << "A1" << endl;
+	}
+	void func(float a) {
+		cout << "A2" << endl;
+	}
+};
+
+class B1 : public A1 {
+public:
+	void func(int a) {
+		cout << "B1" << endl;
+	}
+};
+
 int main(void) {
-	int arr[] = {4,11,16,20,40,15,13,2,3,1,8,4,13};
+	/*int arr[] = {4,11,16,20,40,15,13,2,3,1,8,4,13};
 	show(arr, 13);
-	m_sort(arr, 0, 12);
-	show(arr, 13);
+	func1(arr);*/
+	
 	return 0;
 }
