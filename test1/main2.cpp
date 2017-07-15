@@ -1,76 +1,63 @@
 #include <cstdio>
 #include <cstdlib>
+#include <iostream>
 #include <list>
+#include <map>
+#include <string>
 
 using namespace std;
 
-int main(void) {
-	int count;
-	list<char> ls;
-	scanf("%d", &count);
-	getchar();
+class ss {
+public:
+	map<string, string> data;
 
-	for (int k = 0; k < count; ++k) {
-		char ch;
-		bool flag = false;
-		while ((ch = getchar()) != '\n') {
-			flag = true;
-			switch (ch) {
-			case '[':
-			case '(':
-				ls.push_back(ch);
-				break;
-			case ']':
-				if (ls.rbegin() != ls.rend()) {
-					if (*ls.rbegin() == '[') {
-						ls.pop_back();
-					}
-					else {
-						puts("No");
-						goto cl;
-					}
-				}
-				else {
-					puts("No");
-					goto cl;
-				}
-				break;
-			case ')':
-				if (ls.rbegin() != ls.rend()) {
-					if (*ls.rbegin() == '(') {
-						ls.pop_back();
-					}
-					else {
-						puts("No");
-						goto cl;
-					}
-				}
-				else {
-					puts("No");
-					goto cl;
-				}
-				break;
-			default:
-				puts("No");
-				goto cl;
-				break;
-			}
-		}
-
-		if (ls.size()) {
-			puts("No");
-		}
-		else {
-			if (flag)
-				puts("Yes");
-			else
-				puts("No");
-		}
-
-		cl:
-		ls.clear();
-		flag = false;
+	const string & operator[](const string & key) {
+		return data[key];
 	}
+};
+
+int lowbit(int x) {
+	return x&(-x);
+}
+
+class test1 {
+private:
+	int a;
+
+public:
+	test1() {
+		a = 100;
+	}
+};
+
+void show(int * arr, int len) {
+	for (int i = 0; i < len; ++i) {
+		cout << arr[i] << ' ';
+	}
+	cout << endl;
+}
+
+void func(int * arr, int len) {
+	show(arr, len);
+	int begin = 0;
+	int tail = len - 1;
+	while (begin < tail) {
+		while (arr[begin] % 2 == 0 && begin < tail) {
+			begin++;
+		}
+		while (arr[tail--] % 2 != 0 && tail >= 0) {
+			tail--;
+		}
+		int temp = arr[begin];
+		arr[begin] = arr[tail];
+		arr[tail] = temp;
+	}
+	show(arr, len);
+}
+
+int main(void) {
+	int arr[] = {4,11,16,20,40,15,13,2,3,1,8,4};
+	func(arr, 12);
 
 	return 0;
 }
