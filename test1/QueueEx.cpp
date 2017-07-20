@@ -6,8 +6,8 @@
 
 using namespace std;
 
-const int BLOCK_SIZE = 32;
-const int BLOCK_COUNT = 4;
+const int BLOCK_SIZE = 32;		//bytes in memory block
+const int BLOCK_COUNT = 4;		//amount of blocks. 
 
 struct Node {
 	unsigned id;
@@ -38,7 +38,17 @@ private:
 
 	}
 
-	void readFromFile(list<Node> & l) {
+	bool readOneFromFile(unsigned id, Node * ptr) {
+
+	}
+
+	void deleteFile(unsigned id) {
+		char path[256] = { 0 };
+		itoa(id, path, 10);
+		remove(path);
+	}
+
+	void readFromFile(unsigned id, list<Node> & l) {
 
 	}
 
@@ -51,7 +61,7 @@ public:
 	virtual ~QueueEx() {
 
 	}
-
+	
 	bool push_back(char * data, int length) {
 		if (!data || length <= 0) {
 			return false;
@@ -123,13 +133,43 @@ public:
 			return true;
 		}
 
+		unsigned next = headList.front().next_id;
 		headList.pop_front();
 		count--;
 
+		if (count == BLOCK_COUNT + BLOCK_COUNT) {	//adjust memory .
+			Node temp;
+			unsigned target = (headList.size() == 0) ? next: headList.back().next_id;
+			while (headList.size() < BLOCK_COUNT) {
+				if (!readOneFromFile(target, &temp)) {
+					cout << "error 1" << endl;
+					exit(-1);
+				}
+				headList.push_back(temp);
+				target = temp.next_id;
+			}
+			while (tailList.size() < BLOCK_COUNT)
+			{
+				if (!readOneFromFile(target, &temp)) {
+					cout << "error 2" << endl;
+					exit(-1);
+				}
+				tailList.push_front(temp);
+				target = temp.next_id;
+			}
+			return true;
+		}
+		
 		if (headList.size() == 0) {
-
+			readFromFile(next, headList);
 		}
 		
 		return true;
 	}
 };
+
+int main(void) {
+
+
+	return 0;
+}
