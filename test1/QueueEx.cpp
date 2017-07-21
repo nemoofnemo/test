@@ -1,30 +1,26 @@
 #include <cstdio>
 #include <cstdlib>
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <list>
 
 using namespace std;
 
-const int BLOCK_SIZE = 32;		//bytes in memory block
 const int BLOCK_COUNT = 4;		//amount of blocks. 
+
+//运行过程中创建的临时文件与可执行文件在同一目录下
 
 struct Node {
 	unsigned id;
 	unsigned next_id;
-	char * data;
-	int length;
+	int value;
 
 	Node() {
 		id = 0;
 		next_id = 0;
-		data = nullptr;
-		length = 0;
+		value = 0;
 	}
-
-	//operator=(){}
-
-	//Node(const Node&){}
 };
 
 class QueueEx {
@@ -35,11 +31,18 @@ private:
 	int count;
 
 	void writeToFile(list<Node> & l) {
-
-	}
-
-	bool readOneFromFile(unsigned id, Node * ptr) {
-
+		auto it = l.begin();
+		auto end = l.end();
+		while (it != end) {
+			char name[256] = { 0 };	//warning
+			itoa(it->id, name, 10);		//type convert: unsigned to int
+			fstream fs;
+			fs.open(name, fstream::out | fstream::trunc);
+			fs << it->value << endl << it->next_id << endl;	
+			fs.close();
+			it++;
+		}
+		cout << "write 4 blocks to file" << endl;
 	}
 
 	void deleteFile(unsigned id) {
@@ -48,8 +51,35 @@ private:
 		remove(path);
 	}
 
-	void readFromFile(unsigned id, list<Node> & l) {
+	bool readOneFromFile(unsigned id, Node * ptr) {
+		char name[256] = { 0 };	//warnning
+		itoa(id, name, 10);			//type convert: unsigned to int
+		ptr->id = id;
+		ifstream fs;
+		fs.open(name, fstream::in);
+		string str;
+		fs >> str;
+		ptr->value = atoi(str.c_str());
+		str = "";
+		fs >> str;
+		ptr->next_id = atoi(str.c_str());
+		fs.close();
+		deleteFile(id);
+		cout << "read 1 file" << endl;
+		return true;
+	}
 
+	void readFromFile(unsigned id, list<Node> & l) {
+		unsigned target = id;
+		l.clear();
+		while (l.size() < BLOCK_COUNT)
+		{
+			Node temp;
+			temp.id = target;
+			readOneFromFile(target, &temp);
+			l.push_back(temp);
+			target = temp.next_id;
+		}
 	}
 
 public:
@@ -59,19 +89,16 @@ public:
 	}
 
 	virtual ~QueueEx() {
-
+		//clear ..
+		//....
 	}
 	
-	bool push_back(char * data, int length) {
-		if (!data || length <= 0) {
-			return false;
-		}
-
+	bool push_back(int val) {
 		//new queue node
+		cout << "push 1 block to queue, val:" <<val << endl;
 		Node temp;
-		temp.data = data;
 		temp.id = index++;
-		temp.length = length;
+		temp.value = val;
 
 		if (count < BLOCK_COUNT) { // elements in queue's head
 			if (count != 0) {
@@ -107,8 +134,8 @@ public:
 		return true;
 	}
 
-	bool pop_front(char ** data, int * length) {
-		if ( !data || length == nullptr ) {
+	bool pop_front(int * val) {
+		if ( val == nullptr ) {
 			return false;
 		}
 
@@ -116,8 +143,8 @@ public:
 			return false;
 		}
 
-		*data = headList.front().data;
-		*length = headList.front().length;
+		*val = headList.front().value;
+		cout << "pop 1 block ,val:" << *val << endl;
 
 		if (count <= BLOCK_COUNT) {
 			headList.pop_front();
@@ -169,7 +196,16 @@ public:
 };
 
 int main(void) {
+	QueueEx q;
+	for (int i = 1; i <= 10; ++i) {
+		q.push_back(i);
+	}
 
+
+	for (int i = 1; i <= 10; ++i) {
+		int val;
+		q.pop_front(&val);
+	}
 
 	return 0;
 }
